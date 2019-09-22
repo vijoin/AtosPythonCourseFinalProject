@@ -1,9 +1,12 @@
 from flask import Flask, jsonify, abort, make_response, request
 from flask_sqlalchemy import SQLAlchemy
 
+
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
 db = SQLAlchemy(app)
+
+from final_project.flask_blog.models.post import *
 
 posts = [{
             'id': 1,
@@ -55,8 +58,8 @@ def get_all_posts():
 def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
 
-@app.route('/blog/api/v0.1/posts', methods=['POST'])
-def create_post():
+@app.route('/blog/api/v0.1/mock_posts', methods=['POST'])
+def create_mock_post():
     if not request.json or not 'title' in request.json:
         abort(400)
     post = {
@@ -67,6 +70,17 @@ def create_post():
     }
     posts.append(post)
     return jsonify({'post': post}), 201
+
+@app.route('/blog/api/v0.1/posts', methods=['POST'])
+def create_post():
+    if not request.json or not 'title' in request.json:
+        abort(400)
+    post = Post(title=request.json['title'],
+                author_id=request.json.get('author', 1),
+                body=request.json.get('body', "No Data"))
+    db.session.add(post)
+    db.session.commit()
+    return jsonify({"post": {'id': post.id, 'title': post.title}})
 
 if __name__ == '__main__':
     app.run()
