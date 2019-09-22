@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, abort
+from flask import Flask, jsonify, abort, make_response
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
@@ -50,6 +50,10 @@ def get_post(post_id):
 @app.route('/blog/api/v0.1/posts')
 def get_all_posts():
     return jsonify({'posts': posts})
+
+@app.errorhandler(404)
+def not_found(error):
+    return make_response(jsonify({'error': 'Not found'}), 404)
 
 if __name__ == '__main__':
     app.run()
