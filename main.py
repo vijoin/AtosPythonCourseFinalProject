@@ -43,8 +43,8 @@ posts = [{
 def index():
     return "Hello World"
 
-@app.route("/blog/api/v0.1/posts/<int:post_id>", methods=['GET'])
-def get_post(post_id):
+@app.route("/blog/api/v0.1/mock_posts/<int:post_id>", methods=['GET'])
+def get_mock_post(post_id):
     post = [post for post in posts if post['id'] == post_id]
     if not post:
         abort(404)
@@ -81,6 +81,17 @@ def create_post():
     db.session.add(post)
     db.session.commit()
     return jsonify({"post": {'id': post.id, 'title': post.title}})
+
+@app.route('/blog/api/v0.1/posts/<int:post_id>', methods=['GET'])
+def get_post(post_id):
+    post = Post.query.filter_by(id=post_id).first_or_404()
+    return jsonify({'post': {
+                        'id': post.id,
+                        'title': post.title,
+                        'author': post.author_id,
+                        'body': post.body,
+                            }
+                    })
 
 if __name__ == '__main__':
     app.run()
