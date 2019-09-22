@@ -1,17 +1,11 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, abort
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
 db = SQLAlchemy(app)
 
-@app.route('/')
-def index():
-    return "Hello World"
-
-@app.route('/posts/all')
-def get_all_posts():
-    posts = ({
+posts = [{
             'id': 1,
             'author': 'Victor Inojosa',
             'email': 'vijoin@gmail.com',
@@ -40,7 +34,21 @@ def get_all_posts():
                         <p>At the end of this course you'll be able to build an API REST and a simple but powerful Blog.</p>
                         <p>Please, feel free to make any suggestions!</p><p><b>Let's begin!</b></p>
                 """,
-            })
+            }]
+
+@app.route('/')
+def index():
+    return "Hello World"
+
+@app.route("/blog/api/v0.1/posts/<int:post_id>", methods=['GET'])
+def get_post(post_id):
+    post = [post for post in posts if post['id'] == post_id]
+    if not post:
+        abort(404)
+    return jsonify({'post': post[0]})
+
+@app.route('/blog/api/v0.1/posts')
+def get_all_posts():
     return jsonify({'posts': posts})
 
 if __name__ == '__main__':
