@@ -1,6 +1,9 @@
 from flask import Flask, jsonify
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
+db = SQLAlchemy(app)
 
 @app.route('/')
 def index():
@@ -42,3 +45,4 @@ def get_all_posts():
 
 if __name__ == '__main__':
     app.run()
+    db.create_all()
