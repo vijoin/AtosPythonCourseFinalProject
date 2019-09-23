@@ -1,5 +1,5 @@
 from final_project.flask_blog.main import db
-
+from final_project.flask_blog.models.author import Author
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
