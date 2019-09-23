@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, abort, make_response, request
+from flask import Flask, jsonify, abort, make_response, request, url_for
 from flask_sqlalchemy import SQLAlchemy
 
 
@@ -90,6 +90,7 @@ def get_all_posts():
     for post in Post.query.all():
         posts.append({
             'id': post.id,
+            'uri': url_for('get_post', post_id=post.id, _external=True),
             'title': post.title,
             'author': post.author_id,
             'body': post.body,
